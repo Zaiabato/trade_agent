@@ -7,7 +7,7 @@ from eth_account import Account
 import logging
 
 logging.basicConfig(
-    filename='trades.log',  # Используем trades.log для сделок
+    filename='trades.log',
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
@@ -31,6 +31,22 @@ class HyperliquidAPI:
         )
         logger.info(f"Подключено к Hyperliquid {'testnet' if self.environment == 'testnet' else 'mainnet'}")
 
+    def get_candles(self, coin="BTC", interval="1h", start_time=None, end_time=None):
+        """Получить исторические свечи (candles) из Info API Hyperliquid."""
+        try:
+            # Используем candle_snapshot из SDK (требует start_time и end_time в ms)
+            candles = self.info_client.candle_snapshot(
+                coin=coin,
+                interval=interval,
+                start_time=start_time,
+                end_time=end_time
+            )
+            logger.info(f"Получены свечи для {coin}: {len(candles) if candles else 0} точек")
+            return candles or []
+        except Exception as e:
+            logger.error(f"Ошибка получения свечей: {e}")
+            return []
+
     def get_price(self, asset="BTC"):
         try:
             all_mids = self.info_client.all_mids()
@@ -45,7 +61,7 @@ class HyperliquidAPI:
             limit_px = str(price) if price else "0"
             logger.info(f"Отправка ордера: asset={asset}, is_buy={is_buy}, sz={qty}, limit_px={limit_px}, order_type={order_type}")
             result = self.exchange_client.order(
-                asset=asset,  # Изменено с coin на asset
+                asset=asset,
                 is_buy=is_buy,
                 sz=str(qty),
                 limit_px=limit_px,
@@ -72,7 +88,8 @@ class HyperliquidAPI:
             balance = {
                 "margin_used": user_state.get("marginUsed", "0"),
                 "withdrawable": user_state.get("withdrawable", "0"),
-                "asset_positions": user_state.get("assetPositions", [])
+                "asset_positions": user_state.get("assetPositions", []),
+                "fundingRate": user_state.get("funding", {}).get("fundingRate", "0.0001") if "funding" in user_state else "0.0001"  # Добавили funding
             }
             logger.info(f"Получен баланс: {balance}")
             return balance

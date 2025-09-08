@@ -1,0 +1,11 @@
+[0;1;32m●[0m tradebot.service - Hyperliquid ML Trading Bot
+     Loaded: loaded (/etc/systemd/system/tradebot.service; enabled; vendor preset: enabled)
+     Active: [0;1;32mactive (running)[0m since Sun 2025-09-07 15:45:45 CEST; 8ms ago
+   Main PID: 1095195 (streamlit)
+      Tasks: 1 (limit: 28786)
+     Memory: 2.7M
+        CPU: 7ms
+     CGroup: /system.slice/tradebot.service
+             └─1095195 /root/trade_agent/venv/bin/python3 /root/trade_agent/venv/bin/streamlit run /root/trade_agent/app.py --server.port 8501 --server.headless true
+
+Sep 07 15:45:45 vmi2447136 systemd[1]: Started Hyperliquid ML Trading Bot.

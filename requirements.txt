@@ -7,3 +7,4 @@ matplotlib>=3.7.0
 python-telegram-bot>=20.0
 torch>=2.0.0
 scikit-learn>=1.2.0
+eth-account>=0.8.0
